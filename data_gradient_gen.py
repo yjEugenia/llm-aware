@@ -71,7 +71,7 @@ def participation_rank(singular_vals):
 class MLPActivationGradCollector:
     def __init__(self, model):
         """
-        收集每一层 MLP 输出激活的梯度和 hidden states
+      
         """
         self.model = model
         self.mlp_act_grads = {}
@@ -107,7 +107,7 @@ class MLPActivationGradCollector:
 
 def sampling_results_to_QA(results, idx2item,args):
     """
-    sampling json → GetGradientDataset 可用格式
+
     """
     data_lis = []
     for item in results:
@@ -159,7 +159,7 @@ def find_all_mlp_linear_names(model):
 
 def compute_effective_condition_number(singular_vals, eps=1e-12):
     """
-    κ = λ_max / λ_min  (忽略极小数值)
+
     """
     singular_vals = singular_vals[singular_vals > eps]
     if singular_vals.numel() < 2:
