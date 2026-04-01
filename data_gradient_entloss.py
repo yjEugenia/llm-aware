@@ -72,7 +72,7 @@ def participation_rank(singular_vals):
 class MLPActivationGradCollector:
     def __init__(self, model):
         """
-        收集每一层 MLP 输出激活的梯度和 hidden states
+       
         """
         self.model = model
         self.mlp_act_grads = {}
@@ -86,7 +86,7 @@ class MLPActivationGradCollector:
 
             def forward_hook(module, input, output, layer_idx=layer_idx):
                 # output = W2 @ phi(W1 h) + b2
-                self.mlp_hidden_states[layer_idx] = input[0].detach()  # input[0] 是 phi(W1 h)
+                self.mlp_hidden_states[layer_idx] = input[0].detach()  # 
 
             def backward_hook(module, grad_input, grad_output, layer_idx=layer_idx):
                 # grad_output[0]: dL / d(mlp output)
@@ -108,7 +108,7 @@ class MLPActivationGradCollector:
 
 def sampling_results_to_QA(results, idx2item,args):
     """
-    sampling json → GetGradientDataset 可用格式
+    
     """
     data_lis = []
     for item in results:
@@ -291,12 +291,6 @@ def split_sampling_results_into_4_groups(
     acc_threshold=0.8
 ):
     """
-    根据 sampling accuracy + prompt_type
-    划分成四类：
-    - answer_data
-    - not_answer_data
-    - doc_answer_data
-    - doc_not_answer_data
     """
 
     answer_data = []
@@ -414,7 +408,6 @@ def select_by_top_relative(
 
 def cap_dataset_size(data, max_size=600, seed=42):
     """
-    每一类数据最多取 max_size 条
     """
     if len(data) <= max_size:
         return data
