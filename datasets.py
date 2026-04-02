@@ -404,10 +404,7 @@ class GetGradientDataset_withanswer(Dataset):
             prompt = prompt_dict[prompt_type[0]]['ra']
         tail = prompt_dict[prompt_type[0]]['tail'] #if not args.usechat else ""
         prediction = f"Answer is {sample['answer'][0]}" if prompt_type[1] in ["ca","a"] else 
-        # # print(args.task)
-        # if args.task == 'mmlu' or args.task == 'tq':
-        #     prompt = prompt.format(question=sample[ref_key], paras=paras, prediction=prediction, subject=args.subject) + tail
-        # else:
+    
         prompt = prompt.format(question=sample[ref_key], paras=paras, prediction=prediction) + tail
         template_prompt = model_template_dict[model_name]
         prompt = template_prompt['prefix'] + prompt + template_prompt['end']
@@ -575,7 +572,7 @@ class GetGradientDataset(Dataset):
     
     def get_labels(self, input_ids, prompt_text, question_text):
         """
-        利用字符串截取来计算 token 长度，完美避开 Tokenizer 的合并 Bug。
+       
         """
         labels = torch.full_like(input_ids, -100)
         
@@ -1069,7 +1066,6 @@ class MMLUGradientDataset_gen(Dataset):
         def collate_fn(batch):
 
             sample = batch[0]
-            # --- 计算 most voted answer ---
             if "samples" in sample and len(sample["samples"]) > 0:
                 preds = [item["pred"] for item in sample["samples"]]
                 most_voted = Counter(preds).most_common(1)[0][0]
@@ -1083,7 +1079,6 @@ class MMLUGradientDataset_gen(Dataset):
                 #     most_voted = Counter(preds).most_common(1)[0][0]
                 #     sample["most_voted_answer"] = [most_voted]
             else:
-                # 如果因为某种原因没有 samples 数据，兜底使用原始 answer
                 sample["most_voted_answer"] = sample.get("answer", [""])
 
             prompt = self.get_prompt(sample)
@@ -1169,31 +1164,21 @@ class MMLUGradientDataset_onlyq(Dataset):
             + self.template_prompt['end']
         )
 
-        # 拼接正确答案（用于计算 loss）
         # full_prompt = full_prompt #+ sample["answer"]
 
         return full_prompt[:-2]
 
     def get_labels(self, input_ids):
 
-        # labels = input_ids.clone()
-
-        # # 只训练最后一个 token（答案）
-        # labels[:, :-1] = -100
+       
         answer_token_ids = self.tokenizer.encode("\n\n", add_special_tokens=False)
-        # 核心修改 1：将所有的 label 初始值设为 -100 (忽略计算 loss)
         labels = torch.full_like(input_ids, -100)
         for i in range(len(input_ids)):
             seq = input_ids[i].tolist()
 
             for j in range(len(seq) - len(answer_token_ids), -1, -1):
                 if seq[j:j+len(answer_token_ids)] == answer_token_ids:
-                    # start_pos 是 answer 的第一个 token 的索引
-                    # 对应的，start_pos - 1 就是 question 的最后一个 token (即 \n)
                     start_pos = j + len(answer_token_ids)
-                    
-                    # 核心修改 2：只保留 answer 第一个 token 的 label
-                    # 这样 loss 就只会基于 question 最后一个 token 的预测输出来计算
                     if start_pos < len(seq):
                         labels[i, start_pos] = input_ids[i, start_pos]
                     
