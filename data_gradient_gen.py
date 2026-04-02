@@ -255,9 +255,7 @@ def get_gradients(dataloader, model, collector, target_modules, gradient_type,ar
 
             f_cnt += cnt
             step += 1
-            # print(gradient_type)
-
-            # 保存结果
+           
             torch.save(
                 ranks,
                 os.path.join(rank_dir, f"{step}.pt")
@@ -371,7 +369,7 @@ def gradient_weighted_pca(
     C = weights[:, None]* (H @ H.T)  # (T, T)
 
 
-    # 4. 特征分解
+    
     U, s, Vh = torch.linalg.svd(C, full_matrices = False)
 
     # descending order
@@ -477,7 +475,7 @@ def main():
     idx2item = collect_dataset.idx2item
     target_modules = find_all_mlp_linear_names(model)
 
-    # 4. four gradient runs（顺序与你原代码一致）
+    
     groups = [
         ("not_answer", not_answer_data),
         ("answer", answer_data),
