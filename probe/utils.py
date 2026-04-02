@@ -446,7 +446,7 @@ class CoTAlignmentDataset_multibins(Dataset):
 class CoTAlignmentDataset(Dataset):
     """
     Each sample:
-        X: (num_layers,)  <-- 修改为一维向量
+        X: (num_layers,)  
         y: scalar {0,1}
     """
 
