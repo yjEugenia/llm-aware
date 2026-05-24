@@ -6,7 +6,7 @@ import json
 import logging
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from la_datasets import REODQADataset, GetGradientDataset_gen
+from datasets import REODQADataset, GetGradientDataset_gen
 import random
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 logging.basicConfig(
